@@ -102,11 +102,26 @@ Psychohistory 的Agent认知框架可以直接引用 [女娲.skill](https://gith
 
 ```
 psychohistory-skill/
-├── README.md              # 你正在看的这个文件
-├── SKILL.md               # 核心执行指令（给AI读的）
+├── README.md                        # 中文介绍（你正在看的这个文件）
+├── README_EN.md                     # 英文介绍
+├── SKILL.md                         # 核心执行指令（给AI读的）
+├── characters/                      # 官方预置人物卡
+│   └── trump.json                   # 特朗普认知框架
 └── references/
-    └── schema.md          # 完整数据结构定义（JSON字段规范）
+    ├── schema.md                    # 场景数据结构定义
+    └── character-schema.md          # 人物卡JSON Schema和校验规则
 ```
+
+## 人物卡系统
+
+Psychohistory 使用标准化的 JSON 人物卡来建模关键决策者的认知框架。
+
+**三层加载机制：**
+1. **优先读取官方库** — 检查 `characters/` 目录下是否有预置卡片
+2. **CLI环境自动生成** — 如果缺失且在命令行环境中，自动调用女娲.skill蒸馏
+3. **对话环境手动提供** — 如果缺失且在网页对话中，引导用户粘贴卡片或用自然语言描述
+
+所有人物卡，无论来源，都必须通过统一的Schema校验。
 
 ## 用户交互
 

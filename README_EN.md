@@ -106,12 +106,26 @@ Currently available personas: Trump, Musk, Zhang Yiming, Munger, and 13 others.
 
 ```
 psychohistory-skill/
-├── README.md              # Chinese introduction
-├── README_EN.md           # You're reading this file
-├── SKILL.md               # Core execution instructions (for AI)
+├── README.md                        # Chinese introduction
+├── README_EN.md                     # You're reading this file
+├── SKILL.md                         # Core execution instructions (for AI)
+├── characters/                      # Official pre-built character cards
+│   └── trump.json                   # Trump cognitive framework
 └── references/
-    └── schema.md          # Full data structure definitions (JSON specs)
+    ├── schema.md                    # Scenario data structure definitions
+    └── character-schema.md          # Character card JSON schema & validation
 ```
+
+## Character Card System
+
+Psychohistory uses standardized JSON character cards to model key decision-makers' cognitive frameworks.
+
+**Three-tier loading mechanism:**
+1. **Official library first** — Check `characters/` directory for pre-built cards
+2. **CLI auto-generation** — If missing and in CLI environment, auto-invoke Nuwa.skill
+3. **Chat manual input** — If missing and in web chat, guide user to paste a card or describe in natural language
+
+All character cards, regardless of source, must pass unified schema validation.
 
 ## User Interaction
 

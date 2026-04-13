@@ -39,7 +39,10 @@ Agents share a common base structure, differentiated by `agent_type`:
 
 ### 2.2 Entity Agent
 
-Cognitive frameworks sourced from Nuwa.skill distillations where available.
+Entity agent cognitive frameworks are loaded from character cards (`characters/*.json`).
+See `references/character-schema.md` for the full character card JSON schema and validation rules.
+
+The `cognitive_framework` field below shows how character card data maps into the scenario context:
 
 ```json
 {
