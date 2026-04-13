@@ -1,160 +1,171 @@
-# Psychohistory · 宏观事件推演引擎 🌳
+# Psychohistory · Macro Event Scenario Engine 🌳
 
-> 不是水晶球，是结构化思维工具。
+**English** · [中文](./README_CN.md)
 
-输入一个正在发生的复杂事件，输出多Agent博弈分析和可能性演化树。
+> Not a crystal ball — a structured thinking tool.
 
-帮你穷举关键决策者、硬约束、因果链和可能的走向——避免遗漏，而非预测未来。
+Input any unfolding complex event; get a multi-agent game-theoretic analysis and a possibility tree.
 
-## 看效果
+Helps you enumerate key decision-makers, hard constraints, causal chains, and possible outcomes — to avoid blind spots, not to predict the future.
 
-**输入：** "帮我推演美伊谈判破裂后的局势走向"
+## See It in Action
 
-**输出：**
+**Input:** "Analyze the situation after the US-Iran talks collapsed"
+
+**Output:**
 
 ```
-🌳 4月22日前美伊是否签署停火延长协议？
+🌳 Will the US and Iran sign a ceasefire extension before April 22?
 
-├── ① 停火到期后战事恢复 ⭐ Rank 1
-│   ├── [GT] 三大症结均触及核心利益，博弈空间极窄
-│   ├── [PSY] 特朗普的「把一切个人化」已激活，退让阈值极高
-│   └── [ORG] 以色列持续施压，充当谈判破坏者
+├── ① Hostilities resume after ceasefire expires ⭐ Rank 1
+│   ├── [GT] All three sticking points touch core interests; negotiation space is minimal
+│   ├── [PSY] Trump's "Personalize Everything" model is activated; retreat threshold is very high
+│   └── [ORG] Israel continues to pressure, acting as a deal-breaker
 │
-├── ② 未签署，但停火事实延续 
-│   ├── [GT] 双方都有避免全面升级的动机
-│   └── [ORG] 大规模军事行动重启需要后勤准备时间
+├── ② No deal signed, but de facto ceasefire holds
+│   ├── [GT] Both sides have incentives to avoid full escalation
+│   └── [ORG] Restarting large-scale military operations requires logistical preparation time
 │
-└── ③ 签署停火延长协议
-    ├── [GT] 三大症结（海峡、浓缩铀、资产解冻）均未解决
-    └── [PSY] 万斯称已提出「最终提议」，伊朗无进一步谈判计划
+└── ③ Ceasefire extension agreement signed
+    ├── [GT] Three core issues (strait, enriched uranium, frozen assets) remain unresolved
+    └── [PSY] Vance called it the "final offer"; Iran announced no further talks planned
 ```
 
-每条分支标注推理来源：`[GT]` 博弈论 · `[PSY]` 心理模型 · `[ORG]` 组织行为学
+Each branch is tagged with its reasoning source: `[GT]` Game Theory · `[PSY]` Psychological Model · `[ORG]` Organizational Behavior
 
-## 它做什么
+## What It Does
 
-1. **识别关键Agent** — 谁在做决策？谁影响决策者？他的认知框架是什么？
-2. **映射硬约束** — 什么是所有人都无法改变的物理和制度边界？
-3. **三引擎分析** — 博弈论、心理模型、组织行为学各自怎么看？
-4. **生成可能性树** — 按可能性从高到低排列互斥选项，每条附带理由
-5. **持续交互** — 注入新信息、添加新选项、修改Agent画像
+1. **Identify Key Agents** — Who makes decisions? Who influences decision-makers? What's their cognitive framework?
+2. **Map Hard Constraints** — What are the immovable physical and institutional boundaries?
+3. **Three-Engine Analysis** — Game theory, psychological models, and organizational behavior each weigh in
+4. **Generate Possibility Tree** — Rank mutually exclusive outcomes from most to least likely, each with reasoning
+5. **Continuous Interaction** — Inject new information, add new options, modify agent profiles
 
-## 它不做什么
+## What It Doesn't Do
 
-- ❌ 不预测未来
-- ❌ 不给出精确概率数字
-- ❌ 不假装无所不知
+- ❌ Does not predict the future
+- ❌ Does not output precise probability numbers
+- ❌ Does not pretend to be omniscient
 
-## 安装
+## Install
 
 ```bash
-npx skills add 你的用户名/psychohistory-skill
+npx skills add your-username/psychohistory-skill
 ```
 
-安装后，在对话中说：
+After installation, try:
 
-- "帮我推演美伊局势"
-- "分析美联储下一步加息还是降息"
-- "推演英伟达和AMD的AI芯片竞争走向"
+- "Analyze the US-Iran situation"
+- "What will the Fed do next on interest rates?"
+- "Map out the NVIDIA vs AMD AI chip competition"
 
-## 适用场景
+## Use Cases
 
-- **地缘政治** — 战争走向、外交博弈、制裁效果推演
-- **宏观经济** — 央行政策、贸易战、能源市场推演
-- **商业竞争** — CEO决策分析、行业格局变化、并购博弈
-- **政策分析** — 立法进程、监管变化、选举推演
+- **Geopolitics** — War trajectory, diplomatic games, sanctions impact
+- **Macroeconomics** — Central bank policy, trade wars, energy markets
+- **Business Competition** — CEO decision analysis, industry shifts, M&A dynamics
+- **Policy Analysis** — Legislative processes, regulatory changes, elections
 
-## 核心概念
+## Core Concepts
 
-### Agent（智能体）
+### Agent
 
-所有有独立决策权的行动者。分为：
-- **实体Agent** — 个人或机构负责人（特朗普、内塔尼亚胡）
-- **群体Agent** — 按需引入的群体力量（MAGA基本盘、华尔街）
+Any actor with independent decision-making power. Two types:
+- **Entity Agent** — Individuals or institutional leaders (Trump, Netanyahu)
+- **Collective Agent** — Group forces introduced as needed (MAGA base, Wall Street)
 
-### 忠诚度关系
+### Loyalty Relationship
 
-同一阵营内的Agent通过忠诚度连接。忠诚度是动态变量：
-- **忠诚模式** — A可以代表整个阵营，但B的倾向是隐性约束
-- **独立模式** — 忠诚度跌破阈值，B成为独立Agent
+Agents within the same faction are connected through a dynamic loyalty value:
+- **Loyal Mode** — A can represent the whole faction, but B's preferences act as a hidden constraint
+- **Independent Mode** — Once loyalty drops below threshold, B becomes a fully independent agent
 
-### 三引擎
+### Three Engines
 
-| 标签 | 引擎 | 看什么 |
-|------|------|--------|
-| `[GT]` | 博弈论 | 收益矩阵、纳什均衡、可信威胁 |
-| `[PSY]` | 心理模型 | 认知框架、偏差、情绪动量 |
-| `[ORG]` | 组织行为学 | 惯性、内部摩擦、路径依赖 |
+| Tag | Engine | What It Examines |
+|-----|--------|-----------------|
+| `[GT]` | Game Theory | Payoff matrices, Nash equilibria, credible threats |
+| `[PSY]` | Psychological Model | Cognitive frameworks, biases, emotional momentum |
+| `[ORG]` | Organizational Behavior | Inertia, internal friction, path dependence |
 
-### 可能性树
+### Historical Precedent Priority
 
-每个节点是一个 Polymarket 式精确命题（二元结果、公认事实、明确时间窗口、精确描述）。分支按可能性排序，不量化概率。
+Reasoning backed by historical precedents ranks higher than pure theoretical reasoning. When an agent's behavior pattern closely matches a known historical pattern, the precedent must be cited in the ranking rationale.
 
-## 与女娲.skill协作
+### Possibility Tree
 
-Psychohistory 的Agent认知框架可以直接引用 [女娲.skill](https://github.com/alchaincyf/nuwa-skill) 蒸馏的人物Skill。
+Each node is a Polymarket-style precise proposition (binary outcome, publicly verifiable, clear time window, precise description). Branches are ranked by likelihood — no numerical probabilities.
 
-女娲负责蒸馏"这个人怎么想"，Psychohistory负责让蒸馏出来的人物在约束条件下博弈。
+## Nuwa.skill Integration
 
-已有可直接使用的人物：特朗普、马斯克、张一鸣、芒格等 13 位。
+Psychohistory's agent cognitive frameworks can directly reference persona skills distilled by [Nuwa.skill](https://github.com/alchaincyf/nuwa-skill).
 
-## 文件结构
+Nuwa distills "how this person thinks"; Psychohistory puts those distilled personas into constrained game scenarios.
+
+Currently available personas: Trump, Musk, Zhang Yiming, Munger, and 13 others.
+
+## File Structure
 
 ```
-psychohistory-skill/
-├── README.md                        # 中文介绍（你正在看的这个文件）
-├── README_EN.md                     # 英文介绍
-├── SKILL.md                         # 核心执行指令（给AI读的）
-├── characters/                      # 官方预置人物卡
-│   └── trump.json                   # 特朗普认知框架
-└── references/
-    ├── schema.md                    # 场景数据结构定义
-    └── character-schema.md          # 人物卡JSON Schema和校验规则
+skill/
+├── README.md                        # English introduction (you're reading this)
+├── README_CN.md                     # Chinese introduction
+├── SKILL.md                         # Core execution instructions (for AI)
+├── characters/
+│   └── psychohistory/
+│       └── trump.json               # Example character card (Trump)
+├── references/
+│   ├── schema.md                    # Scenario data structure definitions
+│   └── character-schema.md          # Character card JSON schema & validation
+└── character-toolkit/               # Character card generation toolkit (submodule)
+    ├── README.md                    # English index
+    ├── README_CN.md                 # Chinese index
+    └── prompt-01..04                # Generation prompts
 ```
 
-## 人物卡系统
+## Character Card System
 
-Psychohistory 使用标准化的 JSON 人物卡来建模关键决策者的认知框架。
+Psychohistory uses standardized JSON character cards to model key decision-makers' cognitive frameworks.
 
-**三层加载机制：**
-1. **优先读取官方库** — 检查 `characters/` 目录下是否有预置卡片
-2. **CLI环境自动生成** — 如果缺失且在命令行环境中，自动调用女娲.skill蒸馏
-3. **对话环境手动提供** — 如果缺失且在网页对话中，引导用户粘贴卡片或用自然语言描述
+**Three-tier loading mechanism:**
+1. **Official library first** — Check `characters/` directory for pre-built cards
+2. **CLI auto-generation** — If missing and in CLI environment, auto-invoke Nuwa.skill
+3. **Chat manual input** — If missing and in web chat, guide user to paste a card or describe in natural language
 
-所有人物卡，无论来源，都必须通过统一的Schema校验。
+All character cards, regardless of source, must pass unified schema validation.
 
-## 用户交互
+## User Interaction
 
-推演完成后支持四种交互：
+Four interaction modes after initial analysis:
 
-**注入已发生的事实：** "刚出了一条新闻——伊朗试射高超音速导弹" → 永久更新主树的排序和推导过程
+**Inject Facts:** "Breaking news — Iran test-fired a hypersonic missile" → Permanently updates the main tree's rankings and reasoning
 
-**假设推演：** "如果伊朗对以色列发动大规模导弹袭击会怎样？" → 生成临时假设分支树，不改变主树
+**Hypothetical Simulation:** "What if Iran launched a massive missile attack on Israel?" → Generates a temporary hypothetical branch tree without changing the main tree
 
-**添加新选项：** "你漏掉了一种可能——伊朗可能对海峡收通行费" → 系统评估新选项的排序位置
+**Add New Options:** "You missed a possibility — Iran might charge tolls on the strait" → System evaluates ranking position for the new option
 
-**修改Agent画像：** "我觉得特朗普还有一个特点——他把控制资源视为胜利" → 系统检查一致性后纳入分析
+**Modify Agent Profile:** "I think Trump has another trait — he sees resource control as victory" → System checks consistency and incorporates into analysis
 
-## 设计理念
+## Design Philosophy
 
-本项目受阿西莫夫「心理史学」启发，但做的不是科幻式预言，而是工程化的结构性思维辅助。
+Inspired by Asimov's "Psychohistory," but this is not sci-fi prophecy — it's engineered structural thinking support.
 
-核心信念：**不是帮你算出答案，而是帮你问对问题。**
+Core belief: **Not helping you compute answers, but helping you ask the right questions.**
 
 ## Roadmap
 
-- [x] 协议层Schema定义
-- [x] Skill版本（当前）
-- [ ] 独立Web应用（可视化概率树 + 交互式推演）
-- [ ] 反向收敛树（从目标结果反推所需条件链，与正向发散树互补）
-- [ ] 理论验证模式（用户提出因果假说，系统搜索正面/反面证据）
-- [ ] 自动化群体Agent画像生成
-- [ ] 与女娲.skill的深度集成
+- [x] Protocol layer schema definition
+- [x] Skill version (current)
+- [ ] Standalone web app (visual probability tree + interactive scenario planning)
+- [ ] Reverse convergence tree (work backwards from a target outcome to map prerequisite condition chains; complements the forward divergence tree)
+- [ ] Theory validation mode (user proposes causal hypothesis, system searches for supporting/opposing evidence)
+- [ ] Automated collective agent profiling
+- [ ] Deep integration with Nuwa.skill
 
-## 许可证
+## License
 
 MIT
 
 ---
 
-*Psychohistory 不创造预言，它创造视角。*
+*Psychohistory doesn't create prophecies — it creates perspectives.*

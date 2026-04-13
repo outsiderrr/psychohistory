@@ -1,4 +1,7 @@
 # Psychohistory (心理史学)
+
+**English** · [中文](./README_CN.md)
+
 An abstract, macroscopic simulation and prediction sandbox based on complex systems and multi-agent behavioral modeling. 
 Unlike traditional deterministic prediction tools, Psychohistory dynamically models how different entities and collectives interact under hard physical/economic constraints to generate a multi-layered **Tree of Possibilities** for future events.
 ## Repository Structure (Monorepo)
