@@ -40,16 +40,40 @@ What are you generating?
 
 ## CLI-first Design
 
-This toolkit **defaults to CLI environments** (e.g. Claude Code). All phase-based prompts and `SKILL.md` assume:
+This toolkit **defaults to CLI environments** and is **portable across CLI agents** (Claude Code, Cline, Aider, goose, continue.dev, OpenClaw, Manus, etc.). All phase-based prompts and `SKILL.md` assume the following are available:
 
 - Filesystem read/write access
-- `git rev-parse --show-toplevel` available for automatic project root detection
-- `python3` + `jsonschema` available for automated schema validation
-- `WebFetch` available for retrieving source data during research phases
+- `git rev-parse --show-toplevel` for automatic project root detection
+- `python3` + `jsonschema` for automated schema validation
+- **A user with access to a chat AI with search capability** (Perplexity, ChatGPT with Search, Gemini Deep Research, Claude.ai, Kimi, 豆包, 元宝, etc.) — used by the **Research Hand-off** protocol during research phases
 
-**Chat-AI as an escape hatch**: if you want to generate a card using ChatGPT, Claude.ai, Trae, Gemini, or similar chat AIs, do not copy `prompt-0X` files directly — they are written for CLI. Instead, invoke `SKILL.md` in **Export Mode**: from your CLI session, tell it the target and scenario, and it will emit a self-contained, chat-AI-adapted prompt you can paste into your chat AI. After the chat AI responds, bring the references.md + JSON content back to your CLI session so this toolkit can validate and save them.
+### Research Hand-off (not WebFetch)
 
-This design lets every CLI step rely confidently on filesystem, Python validation, WebFetch, and other tools, rather than compromising for chat-AI compatibility. Chat-AI support is handled via Export Mode as a single point of adaptation.
+This toolkit intentionally does **not** depend on Claude Code's `WebFetch` or any other CLI-agent-specific web-fetching tool. Research is delegated to the user's chat AI via a copy-paste protocol:
+
+1. `SKILL.md` recognizes that a Phase needs external research
+2. It generates a parameterized research prompt from the relevant `prompt-0X` file's `## Appendix: Research Hand-off Template`
+3. The user copies the prompt into their preferred chat AI with search capability
+4. The chat AI runs the research and returns structured findings
+5. The user pastes the findings back into the CLI session, which integrates them into `references.md`
+
+This keeps the toolkit portable across CLI agents — any CLI agent that can read/write files and run Python can use it — and also produces **higher-quality research than single-URL fetching**, because search-capable chat AIs do multi-step research with cross-referencing and citation tracking.
+
+### Chat-AI as an escape hatch (Export Mode)
+
+If you want to generate an **entire card** inside a chat AI rather than using CLI at all, invoke `SKILL.md` in **Export Mode**. It produces a self-contained, chat-AI-adapted prompt you can paste into ChatGPT / Claude.ai / Trae / Gemini / etc. After the chat AI responds, bring the `references.md` + JSON content back to your CLI session for validation and saving.
+
+### Optional enhancement: MCP integration (not currently developed)
+
+If your CLI agent supports **MCP (Model Context Protocol)** and you have a search MCP server configured (e.g. Perplexity MCP, Brave Search MCP), the Research Hand-off copy-paste step could in principle be replaced by direct MCP tool calls — the skill would invoke the MCP tool and receive research results inline, skipping the user's manual copy-paste.
+
+**This is not currently implemented.** It may be added in a future skill version if MCP search servers become widely available and standardized. For now, Research Hand-off via copy-paste is the only research path in the skill stage.
+
+### Future: engine stage API integration (not currently developed)
+
+In the upcoming `engine/` module (see [`../../engine/README.md`](../../engine/README.md)), the Research Hand-off copy-paste dance can be replaced by **direct API calls** to search-capable LLMs (Perplexity API, OpenAI Search API, Gemini API, etc.). Users will configure API keys once, and the engine will route research requests automatically. Research Hand-off will remain as a fallback for users who don't configure API keys, who need chat-UI-specific features, or who hit API errors.
+
+**This is an engine-stage feature, not a skill-stage feature.** It will not be added to the skill — it's specifically what the engine module exists to enable.
 
 ---
 

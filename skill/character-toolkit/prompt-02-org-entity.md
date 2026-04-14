@@ -304,3 +304,72 @@
 2. **`skill/characters/psychohistory/[agent_id].json`** — 压缩索引，按 Phase 5 的结构从 references.md 编译而成
 
 不要输出中间解释。按 Phase 顺序执行到完成，产出两份文件后停止。
+
+---
+
+## Appendix: Research Hand-off Template
+
+This template is used by `character-toolkit/SKILL.md` during the **Research Hand-off protocol** when Phase 1 (structural scan) and Phase 2 (historical decision cases) need external research.
+
+### Placeholders
+
+- `{TARGET_NAME}` — the organization (e.g., "Islamic Revolutionary Guard Corps (IRGC)", "US Federal Reserve")
+- `{TIME_WINDOW_START}` / `{TIME_WINDOW_END}` — typically 2-3 years ago through today
+- `{SCENARIO_CONTEXT}` — brief scenario description
+
+### Template
+
+```
+You are researching {TARGET_NAME} for a structured organization profile in a Psychohistory geopolitical scenario analysis. Use your search capability to find reputable sources: major news outlets (Reuters, AP, AFP, FT, WSJ, The Economist), think tanks (CSIS, Brookings, Chatham House, Atlantic Council, RAND), academic journals, and primary source documents where available.
+
+**Time focus**: {TIME_WINDOW_START} through {TIME_WINDOW_END}.
+**Scenario context**: {SCENARIO_CONTEXT}
+
+Return your findings in the following EXACT markdown format. Do not add sections, do not rename sections, do not skip sections.
+
+## §1 Source Materials
+Ranked list of 5-10 sources: publisher, title, date, URL.
+
+## §2 Organizational Structure
+- **Formal mission / charter goal**: ...
+- **Actual operational priorities** (may differ from the formal mission): ...
+- **Decision-making mechanism**: autocratic / committee / consensus / hybrid
+- **Final decision-maker(s)**: ...
+- **Decision speed**: fast (days) / medium (weeks) / slow (months)
+- **Main internal factions**: list each with name, stance, relative influence (dominant / significant / marginal)
+
+## §3 Historical Decision Cases (5-10)
+For each case:
+
+### case-01 (YYYY-MM-DD): [brief descriptive title]
+- **Context**: the situation the organization was facing
+- **Decision**: what the organization actually did (action, not rhetoric)
+- **Stated rationale**: the official public reason
+- **Inferred actual rationale**: what analysts read as the real driver (if different)
+- **Outcome**: what happened in the weeks/months after
+- **Subsequent correction**: did the organization adjust, reverse, or double down?
+
+Prioritize contentious or high-stakes decisions. Routine decisions reveal little about organizational character.
+
+## §4 Organizational Inertia
+- **Current trajectory**: what the organization will keep doing if unperturbed
+- **Change resistance level**: very high / high / medium / low
+- **Sources of resistance**: bureaucracy / legal procedures / internal factional deadlock / path dependence / etc.
+- **Historical examples of inertia being broken**: any precedents in the past ~10 years
+
+## §5 Key Dependencies and Constraints
+3-5 items:
+- [Resource or relationship] — [what it enables] — [consequence if cut or removed]
+
+## §6 Communication Style
+- **Primary channels**: press conference / official statement / forward guidance / leaks / etc.
+- **Signature words or phrases**: distinctive signals when real shifts are coming
+- **Say-do consistency**: high / medium / low, with examples
+
+## §7 Current State Snapshot
+1-2 paragraphs on what the organization is currently focused on, recent personnel changes, and strategic shifts within the past 6 months.
+
+---
+
+Once complete, paste the entire output above back into Claude Code and say "integrate this research for {TARGET_NAME}" so the character-toolkit skill can integrate it into the organization card's references.md.
+```

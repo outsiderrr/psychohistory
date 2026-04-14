@@ -255,3 +255,68 @@
 2. **`skill/characters/relationships/[relationship_id].json`** — 压缩索引
 
 不要输出中间解释。按 Phase 顺序执行到产出两份文件为止。
+
+---
+
+## Appendix: Research Hand-off Template
+
+This template is used by `character-toolkit/SKILL.md` during the **Research Hand-off protocol** when Phase 2 (interaction history mining) needs external research.
+
+### Placeholders
+
+- `{AGENT_A_NAME}` — display name of first agent
+- `{AGENT_B_NAME}` — display name of second agent
+- `{TIME_WINDOW_START}` / `{TIME_WINDOW_END}`
+- `{SCENARIO_CONTEXT}`
+
+### Template
+
+```
+You are researching the historical and current relationship between {AGENT_A_NAME} and {AGENT_B_NAME} for a Psychohistory scenario inter-agent relationship card.
+
+The goal is to find **direct interactions** between these two agents — public statements about each other, joint actions, moments of tension, moments of alignment, and any instances where one broke from the other's control or expected direction.
+
+Use your search capability to find: news reports of direct interactions, official statements, leaked communications (if any), and historical analyses of the relationship.
+
+**Time focus**: {TIME_WINDOW_START} through {TIME_WINDOW_END}.
+**Scenario context**: {SCENARIO_CONTEXT}
+
+Return your findings in the following EXACT markdown format.
+
+## §1 Source Materials
+Ranked list of sources: major news outlets, think tanks, academic analyses, primary statements.
+
+## §2 Interaction History (at least 5 cases)
+For each direct-interaction case:
+
+### interaction-01 (YYYY-MM-DD): [brief descriptive title]
+- **Interaction type**: conflict / alignment / ambiguous
+- **Context**: the situation both agents were responding to
+- **{AGENT_A_NAME}'s public statement or action**
+- **{AGENT_B_NAME}'s public statement or action**
+- **Public-vs-actual behavior divergence** (if any)
+- **Outcome on the relationship**: strengthened / weakened / unchanged
+
+Prioritize high-tension moments. Routine cooperation reveals little about relationship character.
+
+## §3 Common Affiliation
+- **Do A and B belong to a common larger community?** Yes / No
+- **If yes**: which one is nominally higher in the hierarchy?
+- **Actual adherence to hierarchy**: is the nominal hierarchy respected in practice? Evidence?
+
+## §4 Mode Switching History
+- **Has B ever broken from A's expected direction?** Yes / No
+- **If yes**: what was the trigger? Was the break recovered?
+- **What would it take to break the relationship again?** (based on patterns in §2)
+
+## §5 Public Threats and Credibility
+- **Has either agent publicly threatened the other?**
+- **If yes**: were the threats carried out? How did the other side respond?
+
+## §6 External Crisis Response
+- **How does the relationship behave when facing a common adversary?** Does it strengthen the bond or expose cracks? Give examples from the past 5 years.
+
+---
+
+Once complete, paste the entire output above back into Claude Code and say "integrate this research for {AGENT_A_NAME}-{AGENT_B_NAME}" so the character-toolkit skill can integrate it into the relationship card's references.md.
+```

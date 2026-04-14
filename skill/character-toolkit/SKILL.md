@@ -14,16 +14,18 @@ description: "Psychohistory Character Card Generation Toolkit. Orchestrates gene
 
 ## Environment Assumptions
 
-This skill is designed for **CLI environments** (Claude Code, similar agent frameworks) with the following available:
+This skill is designed for **CLI environments** and is **portable across CLI agents** (Claude Code, Cline, Aider, goose, continue.dev, OpenClaw, Manus, etc.). It assumes the following are available:
 
 - **Filesystem read/write** at the project root, discoverable via `git rev-parse --show-toplevel`
 - **Python 3** with the `jsonschema` library (or pip-installable: `pip install jsonschema`)
 - **git** for project root detection
-- **`WebFetch` tool** for retrieving source URLs during research phases
+- **A user with access to a chat AI with search capability** (Perplexity, ChatGPT with Search, Gemini Deep Research, Claude.ai, Kimi, 豆包, 元宝, etc.) — used by the **Research Hand-off** protocol (§Step 3.1 below) during the research phases of card generation. This skill does not call those chat AIs directly; it produces research prompts that the user runs in their preferred tool and brings results back
 
-If any of these is missing at runtime, report what's unavailable explicitly — don't silently degrade.
+**Intentionally NOT required**: CLI-agent-specific web-fetching tools such as Claude Code's `WebFetch`. Research is delegated to the user's chat AI via copy-paste, which keeps this skill portable across CLI agents.
 
-**Chat-AI users**: this skill does not execute natively in chat-AI environments (ChatGPT, Claude.ai, Trae, Gemini, etc.). Instead, invoke this skill from CLI in **Export Mode** (§below) — it produces a self-contained prompt you can paste into any chat AI to execute the generation there.
+**Optional enhancement — MCP (Model Context Protocol), not currently implemented**: if your CLI agent supports MCP and you have a search MCP server configured (e.g. Perplexity MCP, Brave Search MCP), the Research Hand-off copy-paste step could in principle be replaced by direct MCP tool calls. This is **not currently developed** — may be added in a future skill version if MCP search servers become widely available and standardized. See `character-toolkit/README.md` §CLI-first Design for the planned MCP integration note.
+
+**Chat-AI users** (users who want to run the full generation inside a chat AI rather than from a CLI at all): this skill does not execute natively in chat-AI environments. Instead, invoke this skill from CLI in **Export Mode** (§below) — it produces a self-contained prompt you can paste into any chat AI to execute the generation there.
 
 ---
 
@@ -100,14 +102,51 @@ From the user's target description, determine the card type:
 
 Read the selected prompt file via the `Read` tool and follow its Phase 0 → Phase N sequence exactly as specified. Each phase-based prompt is self-describing; **this skill's role is orchestration, not reimplementation**. The phase content lives in the prompt files.
 
-### 3.1 Research Phase Handling (typically Phase 1 or Phase 2)
+### 3.1 Research Phase Handling — Research Hand-off protocol
 
-When a Phase requires current / recent data (polls, market prices, news events, organizational decisions since the agent's `data_cutoff`):
+When a Phase requires external research (historical cases, recent decisions, polling data, market movements, current organizational state, interaction history), use the **Research Hand-off** protocol described below.
 
-1. **First** — use the executing AI's training knowledge for stable / historical information (pre-cutoff facts, canonical cases, well-known patterns)
-2. **Second** — if the user has provided source URLs, use the `WebFetch` tool to retrieve them and integrate the content into references.md
-3. **Third** — if critical recent data is missing, pause and ask the user: *"To continue, I need recent data on X. Do you have a URL I can fetch, or a summary I can paste into references.md?"*
-4. **Never** — fabricate recent data. If you don't have it and can't get it, mark the affected fields `strength: low` with an explicit "data unavailable as of [date]" note in references.md
+**The 12-month rule**: For any content falling within the most recent 12 months relative to today's date, **default to Research Hand-off**. Do not trust the executing AI's training knowledge for fresh data — it may be inaccurate, stale, or hallucinated. Training knowledge is reliable only for stable historical content that has settled into the record.
+
+**Protocol**:
+
+1. **Identify the research need** based on the current Phase of the loaded prompt-0X file. Typical needs:
+   - `prompt-02` (organization) — historical decision cases, factional structure, current trajectory, key dependencies
+   - `prompt-03` (collective) — polling data, sensitivity calibration precedents, observable state current values
+   - `prompt-04` (relationship) — direct interaction history between the two endpoint agents
+   - `prompt-01` (personal, fallback only) — if Nuwa is unavailable, delegate the full cognitive profile research via hand-off
+
+2. **Load the Research Hand-off Template** from the corresponding prompt-0X file's `## Appendix: Research Hand-off Template` section. Each phase-based prompt file has one appended after its main execution flow.
+
+3. **Fill in the parameters**. Substitute placeholders with specific values from the user's request:
+   - `{TARGET_NAME}`, `{AGENT_A_NAME}`, `{AGENT_B_NAME}` — target names
+   - `{TIME_WINDOW_START}`, `{TIME_WINDOW_END}` — typically "2-3 years ago" through today
+   - `{SCENARIO_CONTEXT}`, `{TARGET_AGENT_ID}` — scenario-level context
+
+4. **Emit the filled research prompt** to the user as a copy-pasteable markdown code block, preceded by guidance:
+
+   > *"I need external research for this Phase. Copy the prompt below and paste it into your preferred chat AI with search capability. Recommended options (ranked by typical strength):*
+   > - ***Perplexity*** *— English-language research with inline citations*
+   > - ***ChatGPT with Search*** *— general-purpose prompts*
+   > - ***Gemini Deep Research*** *— deep multi-step investigations (15-minute runs)*
+   > - ***Claude.ai with web search*** *— synthesis-heavy tasks*
+   > - ***Kimi / 豆包 / 元宝*** *— Chinese-language content*
+   >
+   > *Once the chat AI returns its findings, paste the entire response back here and say 'integrate this research for [target]'."*
+
+5. **Wait for the user** to return with pasted content. Do not proceed to the next Phase without it.
+
+6. **Integrate the returned research** into `references.md` by mapping its `##` sections (§1 Source Materials, §2 Historical ..., etc.) to the corresponding `references.md` sections. Apply the **format tolerance protocol**:
+   - **Strict on section recognition**: top-level headers must be identifiable (minor rephrasing is OK if the intent is clear)
+   - **Relaxed on sub-structure**: accept variations like bullets-vs-nested-lists, swapped field names, extra wording
+   - **On ambiguity**: ask the user one clarifying question before proceeding
+   - **If severely malformed**: show the user specifically what's missing, offer to either (a) manually annotate the gaps or (b) re-run the research prompt with a different chat AI
+
+7. **If Research Hand-off is declined** (user says "just use what you know" or similar), fall back to training knowledge with explicit `strength: low` on any fresh-data claims, and mark data gaps as "unavailable" in references.md. **Never fabricate** recent data.
+
+**Why not WebFetch**: This skill intentionally does not depend on Claude Code's `WebFetch` or any other CLI-agent-specific web-fetching tool. Research Hand-off is portable across any CLI agent because the actual web research happens in the user's chat AI, outside the CLI agent entirely. It also produces higher-quality research than single-URL fetching, because search-capable chat AIs do multi-step research with cross-referencing and citation tracking.
+
+*Future enhancement (engine stage)*: The engine module will replace the copy-paste step with **direct API calls** to search-capable LLMs (Perplexity API, OpenAI Search API, Gemini API, etc.), while keeping Research Hand-off as a fallback for users who don't configure API keys, who need chat-UI-specific features, or who hit API errors. See `engine/README.md` §Planned Capabilities.
 
 ### 3.2 Checkpoint Behavior
 
@@ -343,7 +382,7 @@ This replaces the pre-v1.1 Tier 2 which directly invoked Nuwa. Nuwa is still inv
 | Target card type unclear | Ask one clarifying question; default to `personal-entity` if the user's description mentions a named individual |
 | prompt-04 Phase 0 gate fails (missing endpoint cards) | Report specifically which endpoint is missing; offer to generate it first (sub-invocation) or terminate |
 | Nuwa.skill invocation fails (during prompt-01 Phase 1) | Report Nuwa's error; offer to fall back to Export Mode |
-| Recent-data research cannot be completed | Pause, ask user for URLs or pasted content; mark affected fields `strength: low`; never fabricate |
+| Recent-data research cannot be completed via Research Hand-off | Pause, show the user what was attempted, offer to (a) retry with a different chat AI, (b) fall back to training knowledge with `strength: low`, or (c) mark fields as "data unavailable"; never fabricate |
 | JSON Schema validation fails | Report the specific field and error; return to the compilation Phase for correction; re-run validation |
 | Python `jsonschema` library missing | Report and instruct `pip install jsonschema`; card is still saved but unvalidated (flagged) |
 | File write fails | Report path + error; ask user to check permissions |

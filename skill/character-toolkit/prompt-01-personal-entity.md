@@ -355,3 +355,84 @@ prompt-01 和 prompt-02/03/04 的关键差异：**prompt-01 把认知蒸馏的�
 ---
 
 **不要输出中间解释**。按 Phase 顺序执行到完成，产出三份文件后停止。如果验证清单有任何一项不通过，先回到对应 Phase 修复再产出。
+
+---
+
+## Appendix: Research Hand-off Template (fallback for when Nuwa is unavailable)
+
+This template is used by `character-toolkit/SKILL.md` in the **Research Hand-off protocol** when `Nuwa.skill` cannot be invoked. Nuwa remains the preferred research path for personal-entity cards; use this only as a fallback.
+
+### Placeholders
+
+- `{TARGET_NAME}` — person's full name
+- `{TIME_WINDOW_START}` / `{TIME_WINDOW_END}` — research time window (typically 2-3 years ago through today)
+- `{SCENARIO_CONTEXT}` — optional scenario description
+
+### Template
+
+```
+You are researching {TARGET_NAME} for a cognitive profile in a Psychohistory scenario. The goal is to extract how this person thinks and decides — mental models, decision heuristics, concession conditions, red lines — NOT a biography.
+
+Use your search capability to find: biographies, memoirs, interviews, psychological analyses, decision case studies, and examples of this person's actual behavior in high-stakes situations.
+
+**Time focus for recent behavior**: {TIME_WINDOW_START} through {TIME_WINDOW_END}.
+**Scenario context**: {SCENARIO_CONTEXT}
+
+Return your findings in the following EXACT markdown format. Do not add sections, do not rename sections, do not skip sections.
+
+## §1 Source Materials
+Ranked list: biographies > autobiographies/memoirs > major interviews > decision case studies > psychological analyses > news profiles. For each: title, author, date, URL.
+
+## §2 Mental Models (3-7)
+For each cognitive lens this person uses to interpret the world:
+
+### mm-01: [model name]
+- **Description**: how this person fundamentally sees the world through this lens (≥20 chars)
+- **Evidence 1**: specific quote, decision, or behavior with source attribution
+- **Evidence 2**: ...
+- **Counter-evidence / scope limits**: when this model doesn't apply
+- **Strength**: high / medium / low
+
+(Repeat for each mental model.)
+
+## §3 Decision Heuristics (4-8)
+Quick judgment rules this person repeatedly uses:
+
+### dh-01: [heuristic name]
+- **Rule**: can be stated as "if X then Y" (≥20 chars)
+- **Supporting cases**: 2-3 historical decisions demonstrating the pattern
+- **Strength**: high / medium / low
+
+## §4 Concession Triggers (at least 2)
+Conditions under which this person has historically changed position:
+
+### ct-01: [trigger description]
+- **Historical precedent**: when this trigger actually fired
+- **Strength**: high / medium / low
+
+## §5 Red Lines (at least 2)
+Things this person has never done despite pressure:
+- [red line] — with evidence of pressure applied but the line holding
+
+## §6 Expression DNA
+- **Rhetorical style**: direct / indirect, emotional / analytical, etc.
+- **Signature phrases**: 3-5 distinctive verbal patterns
+- **Certainty style**: "I believe" type vs "obviously" type vs "many people say" type
+
+## §7 Values Hierarchy (3-5, ranked)
+Core values in priority order. What does this person sacrifice when values conflict?
+
+## §8 Known Biases
+- [Bias name] with specific examples
+
+## §9 Honesty Boundaries
+What CANNOT this profile capture? Must include the following three required disclaimers:
+- **Source material bias**: why public / secondary sources are limited for this person
+- **Private deliberation invisibility**: why the profile cannot reach into private decision-making
+- **Data staleness**: this is a snapshot; beliefs may shift
+- [Any additional limitations specific to this person]
+
+---
+
+Once complete, paste the entire output above back into Claude Code and say "integrate this research for {TARGET_NAME}" so the character-toolkit skill can integrate it into the personal-entity card's references.md.
+```

@@ -40,16 +40,40 @@
 
 ## CLI-first 设计
 
-本工具包**默认在 CLI 环境**（例如 Claude Code）下运行。所有 phase-based prompt 和 `SKILL.md` 都假设以下能力可用：
+本工具包**默认在 CLI 环境**下运行，且**在 CLI agent 之间可移植**（Claude Code / Cline / Aider / goose / continue.dev / OpenClaw / Manus 等）。所有 phase-based prompt 和 `SKILL.md` 都假设以下能力可用：
 
 - 文件系统读写
 - `git rev-parse --show-toplevel` 用于自动定位项目根目录
 - `python3` + `jsonschema` 用于自动 schema 校验
-- `WebFetch` 用于获取研究阶段的源数据
+- **用户有一个带搜索能力的对话 AI**（Perplexity / ChatGPT with Search / Gemini Deep Research / Claude.ai / Kimi / 豆包 / 元宝 等）—— 用于研究阶段的 **Research Hand-off** 协议
 
-**对话 AI 作为逃逸通道**：如果你想在 ChatGPT / Claude.ai / Trae / Gemini 等对话 AI 里生成一张卡，**不要直接复制 `prompt-0X` 文件**——那些是为 CLI 写的。而是通过 `SKILL.md` 的 **Export 模式**：在 CLI 里调用它，告诉它目标和场景，它会输出一段适配过的自包含 prompt 供你复制到对话 AI 里执行。对话 AI 的响应（references.md + JSON）带回 CLI 后，本工具包会做校验和落盘。
+### Research Hand-off（替代 WebFetch）
 
-这个设计让 CLI 下的每一步都可以放心使用文件系统、Python 校验、WebFetch 等能力，不必为"万一在对话 AI 里跑"做让步。对话 AI 的支持通过 Export 模式单点解决。
+本工具包**有意不依赖** Claude Code 的 `WebFetch` 或其他 CLI-agent 专有的 web 抓取工具。研究阶段通过复制粘贴协议委托给用户的对话 AI：
+
+1. `SKILL.md` 识别到某个 Phase 需要外部研究
+2. 从对应 `prompt-0X` 文件的 `## Appendix: Research Hand-off Template` 生成参数化的研究提示词
+3. 用户复制提示词到偏好的带搜索能力的对话 AI
+4. 对话 AI 执行研究，返回结构化结果
+5. 用户把结果粘回 CLI，工具包将其整合到 `references.md`
+
+这让本工具包在 CLI agent 之间可移植——任何能读写文件、能跑 Python 的 CLI agent 都能用——同时产出的研究质量**高于单 URL 抓取**，因为带搜索能力的对话 AI 会做多步骤研究、交叉验证、引用追踪。
+
+### 对话 AI 作为逃逸通道（Export 模式）
+
+如果你想**整张卡**都在对话 AI 里生成（不用 CLI），在 CLI 里调用 `SKILL.md` 的 **Export 模式**。它会输出一段适配过的自包含提示词，你复制到 ChatGPT / Claude.ai / Trae / Gemini 等里执行。完成后把 references.md + JSON 内容带回 CLI 做校验和落盘。
+
+### 可选增强：MCP 集成（当前未开发）
+
+如果你的 CLI agent 支持 **MCP（Model Context Protocol）** 且配置了搜索类 MCP server（如 Perplexity MCP / Brave Search MCP），Research Hand-off 的复制粘贴步骤理论上可以被 MCP 工具调用替代——skill 直接调用 MCP 工具、收到研究结果，跳过用户的手动粘贴。
+
+**这个功能当前未实现。** 如果 MCP 搜索服务器变得广泛可用和标准化，未来可能加进来。当前 skill 阶段 Research Hand-off 复制粘贴是唯一的研究路径。
+
+### 未来：engine 阶段的 API 集成（当前未开发）
+
+在未来的 `engine/` 模块（见 [`../../engine/README_CN.md`](../../engine/README_CN.md)），Research Hand-off 的复制粘贴流程可以被**直接 API 调用**替代——engine 可以调用 Perplexity API / OpenAI Search API / Gemini API 等带搜索能力的 LLM API。用户一次性配好 API 密钥，engine 自动路由研究请求。Research Hand-off 仍会作为 fallback 保留，服务于：不想配 API 密钥的用户、需要 chat UI 特有功能的用户、API 错误时的降级。
+
+**这是 engine 阶段的功能，不是 skill 阶段的。** 它不会加进 skill——这正是 engine 模块存在的目的。
 
 ---
 
