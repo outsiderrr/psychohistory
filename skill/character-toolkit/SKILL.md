@@ -283,16 +283,79 @@ Rules:
 2. Relationships last — their Phase 0 gate requires endpoint cards to exist
 3. Within character cards, order is flexible
 
-### 5.3 Execute in sorted order
+### 5.3 Batch Research Collection (reduces N copy-pastes to 1)
 
-For each item:
+Before executing individual card generation, collect research for all **non-relationship cards** in one merged Research Hand-off call. This reduces N copy-pastes to 1 for users without a wrapper script, and collapses per-card API calls to one batch call for wrapper-script users.
 
-1. Run Steps 1-4 (single-card flow) for that item
-2. Collect the result (paths, validation status)
-3. If a card's validation fails and cannot be resolved, **stop the batch** and report the failing card
-4. Otherwise continue to the next item
+Relationships are handled separately in step 5.5 — they need endpoint character cards to exist first.
 
-### 5.4 Report summary
+**Procedure**:
+
+1. **Gather research needs**: for each character card in the batch (personal / organization / collective), load its corresponding prompt-0X's `## Appendix: Research Hand-off Template`.
+
+2. **Fill each template** with that card's parameters (`{TARGET_NAME}`, `{TIME_WINDOW_*}`, `{SCENARIO_CONTEXT}`, etc.).
+
+3. **Construct a merged research prompt** using clear delimiters so the response can be split per target:
+
+~~~
+You will research multiple targets for a Psychohistory scenario. For EACH
+target listed below, return findings as a separate clearly-delimited section.
+
+=== RESPONSE FORMAT ===
+
+Use the following exact delimiters for each target's section. Do not add
+prose outside these delimited sections.
+
+    <<<TARGET: [target_id]>>>
+    [complete research sections §1-§N as specified in the target's template]
+    <<<END TARGET: [target_id]>>>
+
+=== TARGETS ===
+
+--- Target 1: [target_id_1] ([card_type_1]) ---
+
+[filled-in Research Hand-off Template for target 1]
+
+--- Target 2: [target_id_2] ([card_type_2]) ---
+
+[filled-in Research Hand-off Template for target 2]
+
+... (continue for all character cards in the batch)
+
+=== END TARGETS ===
+~~~
+
+4. **Dispatch the merged prompt**:
+   - **If `PSYCHOHISTORY_RESEARCH_TOOL` is configured** (see §Step 3.1.0): pipe the entire merged prompt to the wrapper via stdin, capture the response from stdout — one API call for the whole batch
+   - **Otherwise**: emit the merged prompt to the user as one copy-pasteable block (preceded by the chat-AI recommendation from §Step 3.1.1), wait for the user to paste the response back — one copy-paste round-trip for the whole batch
+
+5. **Parse the returned content**: split the response on `<<<TARGET: [id]>>>` and `<<<END TARGET: [id]>>>` delimiters to get per-target research. Apply the format tolerance protocol from §Step 3.1.1 — the target boundaries must be identifiable, but minor variations inside each section are acceptable.
+
+6. **Cache per-target research**: store each target's parsed research keyed by `agent_id` for consumption by step 5.4.
+
+**Batch size guidance**:
+
+- **Without wrapper (manual paste)**: recommend **max 4 character cards** per merged prompt to avoid exceeding chat AI context limits (Perplexity, ChatGPT Search, etc. typically cap input around 30-50K tokens). If the user requests more, warn and split into sub-batches of ≤4.
+- **With wrapper**: constrained by the provider's API context window (modern LLMs: 100K+ tokens — 8+ cards comfortable). Quality may still degrade past ~6 cards per call; consider sub-batching for very large sets.
+
+### 5.4 Execute individual card generation
+
+For each character card in dependency-sorted order:
+
+1. Run Steps 1-4 (single-card flow) for that card, **but skip Step 3.1 Research Phase Handling** — use the cached per-target research from step 5.3 instead
+2. Integrate the cached research into the card's `references.md` at the appropriate `§1`-`§N` sections (per the prompt-0X's phase structure)
+3. Continue with the non-research phases (structural analysis, pattern extraction, JSON compilation, Python schema validation)
+4. Collect the result (paths, validation status)
+5. If validation fails and cannot be resolved, **stop the batch** and report the failing card
+
+### 5.5 Handle relationship cards
+
+If the batch includes relationship cards, handle them **after** all character cards are complete so that `prompt-04`'s Phase 0 endpoint-card gate passes.
+
+- **1-2 relationships**: run Steps 1-4 individually for each (standard single-card flow, including Step 3.1 Research Phase Handling for interaction history)
+- **3+ relationships**: optionally run a second merged research collection using `prompt-04-relationship.md`'s Research Hand-off Template — collect all interaction histories in one call, then generate individual relationship cards from the cached research
+
+### 5.6 Report summary
 
 After all items complete (or after stopping on failure):
 
@@ -310,6 +373,10 @@ Files written:
   <PROJECT_ROOT>/skill/characters/psychohistory/iran-government.{json,references.md}
   <PROJECT_ROOT>/skill/characters/psychohistory/irgc-leadership.{json,references.md}
   <PROJECT_ROOT>/skill/characters/relationships/rel-001.{json,references.md}
+
+Research mode: [wrapper: perplexity.sh] or [manual Hand-off]
+Research calls: 1 merged (character cards) + 1 merged (relationships) = 2 total
+  (vs. 3 individual calls in the non-batched flow)
 
 Total: 3 artifacts, 0 validation failures
 ```
