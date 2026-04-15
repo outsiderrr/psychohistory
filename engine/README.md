@@ -58,6 +58,25 @@ This gives group-driven causality (market panics, sentiment phase transitions, s
 
 The structural preparation for this is already in the schema: see the `observable_state` field on collective agents in [`../skill/references/schema.md`](../skill/references/schema.md) §2.3.
 
+### 4. Automatic Research via API Integration
+
+Replace the **Research Hand-off** copy-paste protocol (the current skill-stage mechanism for getting external research into card generation, see `../skill/character-toolkit/SKILL.md` §Step 3.1) with **direct API calls** to search-capable LLMs. Users will configure API keys once for their preferred providers, and the engine will route research requests automatically based on task type and content language:
+
+- **Perplexity API** — default for English-language factual research with inline citations
+- **OpenAI Search API** — general-purpose prompts
+- **Gemini API (Deep Research mode)** — for deep multi-step investigations
+- **Claude API with web search** — for synthesis-heavy tasks
+- **Kimi / 豆包 / 元宝 APIs (when available)** — for Chinese-language content
+
+**Research Hand-off will be preserved as a fallback**, specifically for:
+
+- Users who don't want to configure API keys (skill-stage workflow continues unchanged)
+- Use cases where a chat UI has features not exposed via API (some products still have this asymmetry)
+- API errors, quota exhaustion, or rate limits — graceful degradation to copy-paste
+- Compliance scenarios where API usage is restricted but chat-UI is permitted
+
+Unlike capabilities 1-3 (which are new analytical modes), this is **a plumbing upgrade** — it doesn't change what the system can reason about, only how efficiently it gets the raw material. The skill-stage design is fully compatible with engine-stage operation: the same `prompt-0X` Research Hand-off Templates can be repurposed as API call payloads with minor adaptation.
+
 ## What's NOT Planned
 
 The engine is intentionally scoped to keep it honest. The following directions have been considered and declined at the current stage:
@@ -75,4 +94,5 @@ These decisions may be revisited if the project reaches a much later stage with 
 - [ ] Reverse inference mode
 - [ ] Theory validation mode
 - [ ] Collective `observable_state` event promotion
+- [ ] Automatic research via API integration (with Research Hand-off preserved as fallback)
 - [ ] Integration tests against the Skill module's example scenarios
