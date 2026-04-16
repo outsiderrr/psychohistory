@@ -202,24 +202,14 @@ For each constraint, note its **cascading effects** — how does it impact other
 
 ### Phase 4: Three-Engine Analysis
 
-Analyze the current situation from three distinct perspectives:
+**Read `three-engine/SKILL.md`** using the Read tool and apply its [GT] / [PSY] / [ORG] framework to the agents identified in Phase 2, under the constraints mapped in Phase 3.
 
-#### Game Theory Engine [GT]
-- What are each party's payoff matrices?
-- Is there a Nash equilibrium?
-- Who has first-mover advantage?
-- Are there credible threats and commitments?
+- For each agent with a loaded character card (Phase 1.5), pass the card to the [PSY] engine so it uses the agent's `mental_models`, `decision_heuristics`, and `known_biases`
+- For agents without cards, the [PSY] engine works from publicly known behavior patterns
+- Tag every reasoning line with its engine source: `[GT]`, `[PSY]`, or `[ORG]`
+- Note where engines converge (high-confidence insight) and where they disagree (genuine uncertainty)
 
-#### Psychological Model Engine [PSY]
-- How do each agent's cognitive frameworks (from character cards) affect their interpretation?
-- Are cognitive biases at play? (Check agent's `known_biases` field if available)
-- Which direction does emotional momentum point?
-
-#### Organizational Behavior Engine [ORG]
-- What is each organization's inertial direction?
-- How high is the internal friction cost of changing direction?
-- Is there internal fragmentation or path dependence?
-- How efficiently does information propagate through the organization?
+The Three-Engine Analysis skill handles: the full analytical methodology, historical precedent priority rules, output format standards, and quality checks. See `three-engine/SKILL.md` for the complete framework.
 
 ---
 
