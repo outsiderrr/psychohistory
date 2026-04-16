@@ -140,100 +140,22 @@ If the user provides nothing beyond "generate a card for X", ask the required in
 
 Read the selected prompt file via the `Read` tool and follow its Phase 0 → Phase N sequence exactly as specified. Each phase-based prompt is self-describing; **this skill's role is orchestration, not reimplementation**. The phase content lives in the prompt files.
 
-### 3.1 Research Phase Handling — Research Hand-off protocol
+### 3.1 Research Phase Handling — delegates to Research Hand-off skill
 
-When a Phase requires external research (historical cases, recent decisions, polling data, market movements, current organizational state, interaction history), follow the degradation chain below.
+When a Phase requires external research (historical cases, recent decisions, polling data, market movements, current organizational state, interaction history):
 
-**The 12-month rule**: For any content falling within the most recent 12 months relative to today's date, **do not trust the executing AI's training knowledge**. Fresh data is often inaccurate, stale, or hallucinated. Training knowledge is reliable only for stable historical content that has settled into the record.
+**Read `../research-handoff/SKILL.md`** using the Read tool and follow its protocol completely. Pass these parameters from the current context:
 
-**Degradation chain (check each option in order; use the first one available)**:
+- `research_prompt`: load from the current prompt-0X's `## Appendix: Research Hand-off Template`, fill placeholders with target-specific values ({TARGET_NAME}, {TIME_WINDOW_*}, {SCENARIO_CONTEXT}, {TARGET_AGENT_ID}, etc.)
+- `output_language`: from Step 2.5
+- `integration_target`: the current card's `references.md` file path
+- `batch_items`: if in Batch mode (Step 5.3), provide all targets' prompts as a list
 
-#### 3.1.0 — Wrapper script shortcut (check first)
+The Research Hand-off skill handles: wrapper script detection (`PSYCHOHISTORY_RESEARCH_TOOL`), language instruction prepending, manual copy-paste protocol with chat-AI-specific Canvas/Artifact guidance, paste sanity checking, format tolerance, batch merging, and all error handling.
 
-Before invoking the full Research Hand-off protocol, check if the user has configured an automated research tool via the `PSYCHOHISTORY_RESEARCH_TOOL` environment variable.
+**The 12-month rule**: for any content within the past 12 months, default to Research Hand-off rather than trusting training knowledge.
 
-```bash
-echo "$PSYCHOHISTORY_RESEARCH_TOOL"
-```
-
-If it is set AND points to an executable file:
-
-1. Fill in the research prompt as you would for Step 3 of the main protocol (load the prompt-0X `## Appendix: Research Hand-off Template`, substitute placeholders)
-2. Pipe the filled prompt via stdin to the executable, capture stdout:
-   ```bash
-   FILLED_PROMPT=$(...)  # constructed by this skill
-   RESEARCH_RESULT=$(echo "$FILLED_PROMPT" | "$PSYCHOHISTORY_RESEARCH_TOOL")
-   ```
-3. If exit code is 0 and stdout is non-empty:
-   - Use `$RESEARCH_RESULT` as the research findings, **skip to Step 6 of the main protocol** (integration into references.md)
-   - Skip the user-copy-paste dance entirely
-4. If the wrapper fails (non-zero exit code, empty output, timeout, or error string on stderr):
-   - Report the failure to the user (show the wrapper's stderr)
-   - Fall through to the standard Research Hand-off protocol below (steps 1-7)
-
-**This shortcut is primarily for users of CLI agents that bring their own API key** (OpenClaw, Cline, Aider, goose, continue.dev, etc.), who can configure a ready-to-use wrapper script from `character-toolkit/research-wrappers/`. Claude Code users whose Anthropic credentials are not exposed to the shell can still set up a separate API key (e.g., Perplexity) for this step.
-
-If `PSYCHOHISTORY_RESEARCH_TOOL` is not set → proceed with the standard protocol below.
-
-See `character-toolkit/research-wrappers/README.md` for available reference scripts (Perplexity, Anthropic, OpenAI, Gemini), setup instructions, and the wrapper contract.
-
-#### 3.1.1 — Standard Research Hand-off protocol (manual copy-paste)
-
-If the wrapper shortcut is unavailable or failed, use the standard protocol:
-
-1. **Identify the research need** based on the current Phase of the loaded prompt-0X file. Typical needs:
-   - `prompt-02` (organization) — historical decision cases, factional structure, current trajectory, key dependencies
-   - `prompt-03` (collective) — polling data, sensitivity calibration precedents, observable state current values
-   - `prompt-04` (relationship) — direct interaction history between the two endpoint agents
-   - `prompt-01` (personal, fallback only) — if Nuwa is unavailable, delegate the full cognitive profile research via hand-off
-
-2. **Load the Research Hand-off Template** from the corresponding prompt-0X file's `## Appendix: Research Hand-off Template` section. Each phase-based prompt file has one appended after its main execution flow.
-
-3. **Fill in the parameters**. Substitute placeholders with specific values from the user's request:
-   - `{TARGET_NAME}`, `{AGENT_A_NAME}`, `{AGENT_B_NAME}` — target names
-   - `{TIME_WINDOW_START}`, `{TIME_WINDOW_END}` — typically "2-3 years ago" through today
-   - `{SCENARIO_CONTEXT}`, `{TARGET_AGENT_ID}` — scenario-level context
-   - **If `output_language` ≠ English**, prepend the following instruction to the very top of the filled template (before the first line of the research prompt body):
-     > `**IMPORTANT: Return ALL of your findings in {output_language}. Even when summarizing sources in other languages, write your summaries and analysis in {output_language}. Section headers (§0, §1.1, etc.) should remain as-is in English for structural recognition. Source URLs and proper nouns may remain in their original language.**`
-
-4. **Emit the filled research prompt** to the user as a copy-pasteable markdown code block, preceded by guidance:
-
-   > *"I need external research for this Phase. Copy the prompt below and paste it into your preferred chat AI with search capability. Recommended options (ranked by typical strength):*
-   > - ***Perplexity*** *— English-language research with inline citations*
-   > - ***ChatGPT with Search*** *— general-purpose prompts*
-   > - ***Gemini Deep Research*** *— deep multi-step investigations (15-minute runs)*
-   > - ***Claude.ai with web search*** *— synthesis-heavy tasks*
-   > - ***Kimi / 豆包 / 元宝*** *— Chinese-language content*
-   >
-   > ⚠️ ***Important: many modern chat AIs put long research results in a side panel (Canvas / Artifact / Immersive panel), NOT in the main chat text. If your AI says "I've completed the research" but the actual content is in a side panel:***
-   > - ***Gemini Deep Research***: *click the research card/chip in the chat → open the Canvas panel on the right → select all text in the Canvas → copy from there*
-   > - ***ChatGPT***: *if result opens in Canvas, click into the Canvas panel → select all → copy*
-   > - ***Claude.ai***: *if result appears as an Artifact, click the Artifact → copy its full content*
-   > - ***Perplexity / Kimi / 豆包 / 元宝***: *typically return results directly in the chat stream — copy normally*
-   >
-   > *Once you have the FULL research text (not just a "completed" message), paste it back here and say 'integrate this research for [target]'."*
-
-5. **Wait for the user** to return with pasted content. Do not proceed to the next Phase without it.
-
-6. **Paste sanity check** (before integration): verify the pasted content looks like actual research, not a Canvas/Artifact placeholder. **Red flags**:
-   - Pasted content is under 500 characters total
-   - Contains `googleusercontent.com/immersive_entry_chip` (Gemini Canvas internal placeholder)
-   - Only says "I've completed the research" or similar, with no §N section headers
-   - Contains a single URL reference but no research text body
-
-   If any red flag is detected, tell the user: *"It looks like you may have copied a placeholder instead of the actual research content. Your chat AI probably put the full results in a side panel (Canvas / Artifact). Please open that panel, select all the text inside it, and paste it again."* Do not attempt to integrate placeholder content.
-
-7. **Integrate the returned research** into `references.md` by mapping its `##` sections (§1 Source Materials, §2 Historical ..., etc.) to the corresponding `references.md` sections. Apply the **format tolerance protocol**:
-   - **Strict on section recognition**: top-level headers must be identifiable (minor rephrasing is OK if the intent is clear)
-   - **Relaxed on sub-structure**: accept variations like bullets-vs-nested-lists, swapped field names, extra wording
-   - **On ambiguity**: ask the user one clarifying question before proceeding
-   - **If severely malformed**: show the user specifically what's missing, offer to either (a) manually annotate the gaps or (b) re-run the research prompt with a different chat AI
-
-7. **If Research Hand-off is declined** (user says "just use what you know" or similar), fall back to training knowledge with explicit `strength: low` on any fresh-data claims, and mark data gaps as "unavailable" in references.md. **Never fabricate** recent data.
-
-**Why not WebFetch**: This skill intentionally does not depend on Claude Code's `WebFetch` or any other CLI-agent-specific web-fetching tool. Research Hand-off is portable across any CLI agent because the actual web research happens in the user's chat AI, outside the CLI agent entirely. It also produces higher-quality research than single-URL fetching, because search-capable chat AIs do multi-step research with cross-referencing and citation tracking.
-
-*Future enhancement (engine stage)*: The engine module will replace the copy-paste step with **direct API calls** to search-capable LLMs (Perplexity API, OpenAI Search API, Gemini API, etc.), while keeping Research Hand-off as a fallback for users who don't configure API keys, who need chat-UI-specific features, or who hit API errors. See `engine/README.md` §Planned Capabilities.
+When the Research Hand-off skill completes (research integrated into references.md), return to the current prompt-0X's next Phase.
 
 ### 3.2 Checkpoint Behavior
 

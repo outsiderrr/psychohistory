@@ -65,7 +65,7 @@ If you want to generate an **entire card** inside a chat AI rather than using CL
 
 ### Automated research via wrapper scripts (available now)
 
-The `research-wrappers/` subdirectory provides reference Bash scripts for automating the Research Hand-off copy-paste via direct API calls to search-capable LLMs. Users set the `PSYCHOHISTORY_RESEARCH_TOOL` environment variable to an executable wrapper path, and `SKILL.md` Step 3.1.0 automatically routes research prompts through it — skipping the manual copy-paste entirely.
+The `../research-handoff/wrappers/` subdirectory provides reference Bash scripts for automating the Research Hand-off copy-paste via direct API calls to search-capable LLMs. Users set the `PSYCHOHISTORY_RESEARCH_TOOL` environment variable to an executable wrapper path, and `SKILL.md` Step 3.1.0 automatically routes research prompts through it — skipping the manual copy-paste entirely.
 
 Supported wrappers (reference templates):
 
@@ -78,7 +78,7 @@ Supported wrappers (reference templates):
 
 If the wrapper fails (non-zero exit, empty output, timeout), the skill falls back to standard Research Hand-off. Users who don't configure `PSYCHOHISTORY_RESEARCH_TOOL` continue using Research Hand-off with no change.
 
-See [`research-wrappers/README.md`](./research-wrappers/README.md) for setup, the wrapper contract, cost estimates, and verification guidance. **All wrapper scripts are reference templates based on 2025-05 API shapes — verify against current provider docs before trusting for real work.**
+See [`../research-handoff/wrappers/README.md`](./../research-handoff/wrappers/README.md) for setup, the wrapper contract, cost estimates, and verification guidance. **All wrapper scripts are reference templates based on 2025-05 API shapes — verify against current provider docs before trusting for real work.**
 
 ### Optional enhancement: MCP integration (not currently developed)
 

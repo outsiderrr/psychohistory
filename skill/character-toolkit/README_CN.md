@@ -65,7 +65,7 @@
 
 ### 通过 wrapper 脚本自动化研究（已可用）
 
-`research-wrappers/` 子目录提供了一组参考 Bash 脚本，通过直接调用有搜索能力的 LLM API 来自动化 Research Hand-off 的复制粘贴步骤。用户把 `PSYCHOHISTORY_RESEARCH_TOOL` 环境变量设置为 wrapper 脚本的路径，`SKILL.md` Step 3.1.0 就会自动把研究提示词通过 wrapper 路由——**完全跳过手动复制粘贴**。
+`../research-handoff/wrappers/` 子目录提供了一组参考 Bash 脚本，通过直接调用有搜索能力的 LLM API 来自动化 Research Hand-off 的复制粘贴步骤。用户把 `PSYCHOHISTORY_RESEARCH_TOOL` 环境变量设置为 wrapper 脚本的路径，`SKILL.md` Step 3.1.0 就会自动把研究提示词通过 wrapper 路由——**完全跳过手动复制粘贴**。
 
 支持的 wrapper（参考模板）：
 
@@ -78,7 +78,7 @@
 
 如果 wrapper 执行失败（非零退出码、空输出、超时），skill 会降级到标准 Research Hand-off。不配置 `PSYCHOHISTORY_RESEARCH_TOOL` 的用户继续用 Research Hand-off，工作流不变。
 
-详见 [`research-wrappers/README_CN.md`](./research-wrappers/README_CN.md)——配置步骤、wrapper 契约、成本估算、验证指南。**所有 wrapper 脚本都是基于 2025-05 API 形态写的参考模板——真实使用前请先对照当前服务商文档验证。**
+详见 [`../research-handoff/wrappers/README_CN.md`](./../research-handoff/wrappers/README_CN.md)——配置步骤、wrapper 契约、成本估算、验证指南。**所有 wrapper 脚本都是基于 2025-05 API 形态写的参考模板——真实使用前请先对照当前服务商文档验证。**
 
 ### 可选增强：MCP 集成（当前未开发）
 
