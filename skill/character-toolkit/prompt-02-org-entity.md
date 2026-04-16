@@ -40,7 +40,7 @@
 
 在开始调研前，明确以下内容并记录在 `references.md` 的开头：
 
-- 目标组织的正式名称 + 隶属 + 当前规模
+- 目标组织的正式名称 + 隶属
 - 场景时间窗口（影响调研的时效范围）
 - 建模粒度确认
 - 如果有关联个人卡，记录其 agent_id 以便 Phase 3/4 引用
@@ -80,6 +80,7 @@
 
 ### 1.6 当前状态快照
 - 场景时点下该组织正在做什么？
+- 当前规模（人员 / 预算 / 覆盖范围等，按组织性质取合适的维度）
 - 最近有无重要人事变动或战略转向？
 
 **Checkpoint 1**：六个维度的分析全部写入 `references.md §1`，每个子维度独立小标题。
@@ -309,7 +310,7 @@
 
 ## Appendix: Research Hand-off Template
 
-This template is used by `character-toolkit/SKILL.md` during the **Research Hand-off protocol** when Phase 1 (structural scan) and Phase 2 (historical decision cases) need external research.
+This template is used by `character-toolkit/SKILL.md` during the **Research Hand-off protocol** to collect raw data for **Phase 1** (structural scan) and **Phase 2** (historical decision cases). Output section numbering (**§0, §1.1-§1.6, §2**) matches the Phase 1/2 Checkpoint structure for **direct 1:1 integration** into `references.md`. Phase 3 (Pattern Extraction) and Phase 4 (Factional Analysis) are NOT in this research output — they are derived locally during skill execution from §1 + §2 data.
 
 ### Placeholders
 
@@ -327,18 +328,41 @@ You are researching {TARGET_NAME} for a structured organization profile in a Psy
 
 Return your findings in the following EXACT markdown format. Do not add sections, do not rename sections, do not skip sections.
 
-## §1 Source Materials
-Ranked list of 5-10 sources: publisher, title, date, URL.
+## §0 Source Materials
+Ranked list of 5-10 sources consulted: publisher, title, date, URL.
 
-## §2 Organizational Structure
+## §1.1 Mission and Core Objectives
 - **Formal mission / charter goal**: ...
 - **Actual operational priorities** (may differ from the formal mission): ...
+- **When objectives conflict, which does the organization historically sacrifice?**: ...
+
+## §1.2 Decision Mechanism and Power Structure
 - **Decision-making mechanism**: autocratic / committee / consensus / hybrid
 - **Final decision-maker(s)**: ...
 - **Decision speed**: fast (days) / medium (weeks) / slow (months)
 - **Main internal factions**: list each with name, stance, relative influence (dominant / significant / marginal)
 
-## §3 Historical Decision Cases (5-10)
+## §1.3 Communication Style
+- **Primary channels**: press conference / official statement / forward guidance / leaks / etc.
+- **Signature words or phrases**: distinctive signals when real shifts are coming
+- **Say-do consistency**: high / medium / low, with examples
+
+## §1.4 Key Dependencies and Constraints
+3-5 items:
+- [Resource or relationship] — [what it enables] — [consequence if cut or removed]
+
+## §1.5 Organizational Inertia
+- **Current trajectory**: what the organization will keep doing if unperturbed
+- **Change resistance level**: very high / high / medium / low
+- **Sources of resistance**: bureaucracy / legal procedures / internal factional deadlock / path dependence / etc.
+- **Historical examples of inertia being broken**: any precedents in the past ~10 years
+
+## §1.6 Current State Snapshot
+- **Current size** (personnel / budget / coverage — whichever is most relevant for this organization type)
+- What the organization is currently focused on
+- Recent personnel changes or strategic shifts within the past 6 months
+
+## §2 Historical Decision Cases (5-10)
 For each case:
 
 ### case-01 (YYYY-MM-DD): [brief descriptive title]
@@ -351,25 +375,7 @@ For each case:
 
 Prioritize contentious or high-stakes decisions. Routine decisions reveal little about organizational character.
 
-## §4 Organizational Inertia
-- **Current trajectory**: what the organization will keep doing if unperturbed
-- **Change resistance level**: very high / high / medium / low
-- **Sources of resistance**: bureaucracy / legal procedures / internal factional deadlock / path dependence / etc.
-- **Historical examples of inertia being broken**: any precedents in the past ~10 years
-
-## §5 Key Dependencies and Constraints
-3-5 items:
-- [Resource or relationship] — [what it enables] — [consequence if cut or removed]
-
-## §6 Communication Style
-- **Primary channels**: press conference / official statement / forward guidance / leaks / etc.
-- **Signature words or phrases**: distinctive signals when real shifts are coming
-- **Say-do consistency**: high / medium / low, with examples
-
-## §7 Current State Snapshot
-1-2 paragraphs on what the organization is currently focused on, recent personnel changes, and strategic shifts within the past 6 months.
-
 ---
 
-Once complete, paste the entire output above back into Claude Code and say "integrate this research for {TARGET_NAME}" so the character-toolkit skill can integrate it into the organization card's references.md.
+Once complete, paste the entire output above back into Claude Code and say "integrate this research for {TARGET_NAME}" so the character-toolkit skill can integrate it into the organization card's references.md. The **§0 / §1.x / §2** numbering matches references.md's Phase 1 + Phase 2 Checkpoint structure directly.
 ```

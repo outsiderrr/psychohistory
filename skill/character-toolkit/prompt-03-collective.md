@@ -364,7 +364,7 @@
 
 ## Appendix: Research Hand-off Template
 
-This template is used by `character-toolkit/SKILL.md` during the **Research Hand-off protocol** when Phase 3 (current disposition), Phase 4 (sensitivity calibration), and Phase 6 (observable state) need external data.
+This template is used by `character-toolkit/SKILL.md` during the **Research Hand-off protocol** to collect raw data for **Phases 1-6** of the collective card generation flow. Output section numbering (**§0-§7**) matches the Phase Checkpoint structure for **direct 1:1 integration** into `references.md`.
 
 ### Placeholders
 
@@ -386,15 +386,16 @@ Use your search capability to find: polling data, demographic studies, market be
 
 Return your findings in the following EXACT markdown format.
 
-## §1 Source Materials
+## §0 Source Materials
 Ranked list, prioritizing polling data, demographic studies, academic research, market data.
 
-## §2 Composition
+## §1 Group Boundary and Composition
 - **Core demographics**: age, class, geography, occupation, culture
 - **Estimated size**: with data source
 - **Internal segments** (2-5): name, description, share of total
+- **Boundary stability**: is group membership stable over the modeling time window?
 
-## §3 Core Interests (3-5, ranked by priority)
+## §2 Interest Structure (3-5, ranked by priority)
 For each:
 - **Interest**
 - **Priority** (1 = highest)
@@ -403,7 +404,7 @@ For each:
 - **Supporting cases**: historical instances where this group prioritized this interest over competing ones
 - **Strength**: high / medium / low
 
-## §4 Current Disposition
+## §3 Current Disposition
 - **Most relevant issue** in the scenario
 - **Stance**: support / oppose / neutral / divided
 - **Intensity**: strong / medium / weak / fragile
@@ -411,7 +412,7 @@ For each:
 - **Recent shift** (past 3-6 months): change direction + trigger, or "no significant recent shift"
 - **Internal tension**: any split between sub-segments on this issue
 
-## §5 Sensitivity Map (3-5 event types)
+## §4 Sensitivity Map (3-5 event types)
 For each:
 - **Event type**
 - **Sensitivity**: extreme / high / medium / low / negligible
@@ -420,7 +421,7 @@ For each:
 - **Historical precedent**: 1-2 past cases where a similar shock hit a similar group, with observed shift magnitude
 - **Strength**: high / medium / low
 
-## §6 Influence Pathway
+## §5 Influence Pathway
 - **Target entity**: {TARGET_AGENT_ID}
 - **Transmission mechanism**: e.g., "polls → Trump's Scorecard Test heuristic"
 - **Channel**: polls / votes / market_prices / street_protests / media_pressure / lobbying / other
@@ -428,20 +429,22 @@ For each:
 - **Historical verification**: a past instance where this pathway actually operated
 - **Break conditions**: when does this pathway fail?
 
-## §7 Observable State Indicators (1-3)
+## §6 Observable State Indicators (1-3)
 For each measurable macro indicator:
 - **Indicator name** (e.g., "MAGA approval rating for Trump")
 - **Measurement method**: how it is actually measured
 - **Current value** (with source date)
 - **Strategically relevant thresholds**: value → strategic implication when crossed. Each threshold must have historical precedent OR an entity-agent concession_trigger referencing it.
 
-## §8 Historical Behavior Cases (2-4)
+## §7 Historical Behavior Cases (2-4, optional but recommended)
 Past instances when this group's attitudes shifted significantly:
 - **Event, year**
 - **Attitude shift**
 - **Transmission mechanism** (how the shift reached decision-makers)
 
+These cases support §4 Sensitivity Map calibration.
+
 ---
 
-Once complete, paste the entire output above back into Claude Code and say "integrate this research for {TARGET_NAME}" so the character-toolkit skill can integrate it into the collective card's references.md.
+Once complete, paste the entire output above back into Claude Code and say "integrate this research for {TARGET_NAME}" so the character-toolkit skill can integrate it into the collective card's references.md. The **§0-§7** numbering matches references.md's Phase 1-6 Checkpoint structure directly (§7 supports §4 calibration).
 ```

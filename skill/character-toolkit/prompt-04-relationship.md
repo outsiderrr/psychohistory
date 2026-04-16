@@ -260,7 +260,7 @@
 
 ## Appendix: Research Hand-off Template
 
-This template is used by `character-toolkit/SKILL.md` during the **Research Hand-off protocol** when Phase 2 (interaction history mining) needs external research.
+This template is used by `character-toolkit/SKILL.md` during the **Research Hand-off protocol** to collect raw data for **Phase 1** (scenario context) and **Phase 2** (interaction history). Output numbering (**§0, §1, §2**) matches the Phase 1/2 Checkpoint structure for **direct integration**. Phase 3 (Structural Classification), Phase 4 (Calibration), and Phase 5 (Scope) are derived locally, not produced by research.
 
 ### Placeholders
 
@@ -283,8 +283,13 @@ Use your search capability to find: news reports of direct interactions, officia
 
 Return your findings in the following EXACT markdown format.
 
-## §1 Source Materials
+## §0 Source Materials
 Ranked list of sources: major news outlets, think tanks, academic analyses, primary statements.
+
+## §1 Scenario Context
+Brief background on the current state of the relationship as of the scenario date:
+- What is the shared or competing context both agents are currently operating in?
+- Has the relationship recently shifted, or is it stable?
 
 ## §2 Interaction History (at least 5 cases)
 For each direct-interaction case:
@@ -299,24 +304,14 @@ For each direct-interaction case:
 
 Prioritize high-tension moments. Routine cooperation reveals little about relationship character.
 
-## §3 Common Affiliation
-- **Do A and B belong to a common larger community?** Yes / No
-- **If yes**: which one is nominally higher in the hierarchy?
-- **Actual adherence to hierarchy**: is the nominal hierarchy respected in practice? Evidence?
+**Within the interaction cases, also note the following sub-themes** (these provide raw material for Phase 3 Structural Classification and Phase 4 Calibration — record them as observations within §2, not as separate top-level sections):
 
-## §4 Mode Switching History
-- **Has B ever broken from A's expected direction?** Yes / No
-- **If yes**: what was the trigger? Was the break recovered?
-- **What would it take to break the relationship again?** (based on patterns in §2)
-
-## §5 Public Threats and Credibility
-- **Has either agent publicly threatened the other?**
-- **If yes**: were the threats carried out? How did the other side respond?
-
-## §6 External Crisis Response
-- **How does the relationship behave when facing a common adversary?** Does it strengthen the bond or expose cracks? Give examples from the past 5 years.
+- **Subordination / common affiliation evidence**: Do A and B belong to a common larger community? Who is nominally higher? Is the hierarchy respected in practice?
+- **Mode switching instances**: Has B ever broken from A's expected direction? What triggered it? Was the break recovered?
+- **Threat credibility**: Has either agent publicly threatened the other? Were threats carried out?
+- **External crisis response**: How does the relationship behave when facing a common adversary? Does crisis strengthen or expose cracks?
 
 ---
 
-Once complete, paste the entire output above back into Claude Code and say "integrate this research for {AGENT_A_NAME}-{AGENT_B_NAME}" so the character-toolkit skill can integrate it into the relationship card's references.md.
+Once complete, paste the entire output above back into Claude Code and say "integrate this research for {AGENT_A_NAME}-{AGENT_B_NAME}" so the character-toolkit skill can integrate it into the relationship card's references.md. The **§0 / §1 / §2** numbering matches references.md's Phase 1 + Phase 2 Checkpoint structure directly.
 ```
