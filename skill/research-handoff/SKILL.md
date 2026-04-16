@@ -82,7 +82,11 @@ If `PSYCHOHISTORY_RESEARCH_TOOL` is not set → proceed to Step 2.
 
 1. Take the `research_prompt` provided by the calling skill (already filled with target-specific parameters)
 
-2. **If `output_language` ≠ English**, prepend the following instruction to the very top of the prompt:
+2. **Always prepend** the following citation format instruction to the top of the prompt:
+
+   > **CITATION FORMAT: Every factual claim or analytical conclusion must include an inline citation [N] (e.g., "IRGC controls an estimated 30% of Iran's economy [3]"). At the end of your response, provide a numbered source list: [N] Author/Organization, "Title", Date, URL. Claims without inline citations are treated as unsourced and may be discarded.**
+
+3. **If `output_language` ≠ English**, also prepend the following language instruction:
 
    > **IMPORTANT: Return ALL of your findings in {output_language}. Even when summarizing sources in other languages, write your summaries and analysis in {output_language}. Section headers (§0, §1.1, etc.) should remain as-is in English for structural recognition. Source URLs and proper nouns may remain in their original language.**
 
@@ -98,7 +102,7 @@ Output the prepared prompt as a copy-pasteable markdown code block, preceded by:
 > - ***Kimi / 豆包 / 元宝*** *— Chinese-language content*
 >
 > ⚠️ ***Important: many modern chat AIs put long research results in a side panel (Canvas / Artifact / Immersive panel), NOT in the main chat text. If your AI says "I've completed the research" but the actual content is in a side panel:***
-> - ***Gemini Deep Research***: *click the research card/chip → open the Canvas panel → select all → copy from there*
+> - ***Gemini Deep Research***: ***Option A (recommended)***: *click "Share & Export" → "Create Google Doc" → set sharing to "Anyone with the link can view" → paste the Google Doc URL back here (the CLI agent can read it directly via the export endpoint, with full source list intact).* ***Option B***: *click the research card/chip → select all text with Ctrl+A/Cmd+A → copy. Note: Gemini's "Copy content" button drops the source list — always use select-all or Option A instead.*
 > - ***ChatGPT***: *if result opens in Canvas, click into it → select all → copy*
 > - ***Claude.ai***: *if result appears as an Artifact, click it → copy its full content*
 > - ***Perplexity / Kimi / 豆包 / 元宝***: *typically return in chat stream — copy normally*
@@ -107,7 +111,11 @@ Output the prepared prompt as a copy-pasteable markdown code block, preceded by:
 
 ### Step 4 — Wait and Validate the Paste
 
-Wait for the user to return with pasted content. **Before integrating, run a paste sanity check**:
+Wait for the user to return with pasted content.
+
+**Google Doc URL detection**: If the user pastes a URL matching `docs.google.com/document/d/...` instead of text content, read the document directly via the export endpoint: append `/export?format=txt` to the document base URL (strip any existing query parameters or hash). This returns the full document as plain text including sources that Gemini's "Copy content" button would drop. Fetch using whatever URL-reading capability your CLI agent provides (`WebFetch`, `curl`, MCP tools). If fetching fails (permissions error), ask the user to set sharing to "Anyone with the link can view" and retry.
+
+**Before integrating, run a paste sanity check**:
 
 **Red flags** (any one = ask user to re-paste):
 - Pasted content is under 500 characters total
