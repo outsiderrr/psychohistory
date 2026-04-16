@@ -129,6 +129,8 @@
 - 从未跨越的线——哪怕压力极大也没做
 - 引用对应案例证明"面对 X 压力仍未跨越"
 
+**Case concentration check**: if more than half of the extracted mental_models or decision_heuristics share the same supporting cases (e.g., case-01 appears in 4 out of 6 conclusions), add a **case-concentration note** in §3 alerting reviewers that the evidence base is narrow. Consider whether Phase 2 should be re-run with a request for more diverse cases (especially domestic/economic cases if the current set is military-heavy).
+
 **Checkpoint 3**：提炼结果写入 `references.md §3 Pattern Extraction`，每条结论都标注证据来源（指回 §2 的案例编号）和 strength 等级。
 
 ---

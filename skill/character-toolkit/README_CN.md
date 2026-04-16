@@ -44,7 +44,7 @@
 
 - 文件系统读写
 - `git rev-parse --show-toplevel` 用于自动定位项目根目录
-- `python3` + `jsonschema` 用于自动 schema 校验（首次使用前执行 `pip install jsonschema`——不自动安装；详见 `SKILL.md` §Step 4）
+- `python3` + `jsonschema` 用于自动 schema 校验（首次使用前：`python3 -m venv .venv && source .venv/bin/activate && pip install jsonschema`；macOS 3.12+ 遇到 PEP 668 可用 `pip install --break-system-packages jsonschema`；详见 `SKILL.md` §Step 4）
 - **用户有一个带搜索能力的对话 AI**（Perplexity / ChatGPT with Search / Gemini Deep Research / Claude.ai / Kimi / 豆包 / 元宝 等）—— 用于研究阶段的 **Research Hand-off** 协议
 
 ### Research Hand-off（替代 WebFetch）

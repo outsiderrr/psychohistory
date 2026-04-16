@@ -195,11 +195,25 @@ If the wrapper shortcut is unavailable or failed, use the standard protocol:
    > - ***Claude.ai with web search*** *— synthesis-heavy tasks*
    > - ***Kimi / 豆包 / 元宝*** *— Chinese-language content*
    >
-   > *Once the chat AI returns its findings, paste the entire response back here and say 'integrate this research for [target]'."*
+   > ⚠️ ***Important: many modern chat AIs put long research results in a side panel (Canvas / Artifact / Immersive panel), NOT in the main chat text. If your AI says "I've completed the research" but the actual content is in a side panel:***
+   > - ***Gemini Deep Research***: *click the research card/chip in the chat → open the Canvas panel on the right → select all text in the Canvas → copy from there*
+   > - ***ChatGPT***: *if result opens in Canvas, click into the Canvas panel → select all → copy*
+   > - ***Claude.ai***: *if result appears as an Artifact, click the Artifact → copy its full content*
+   > - ***Perplexity / Kimi / 豆包 / 元宝***: *typically return results directly in the chat stream — copy normally*
+   >
+   > *Once you have the FULL research text (not just a "completed" message), paste it back here and say 'integrate this research for [target]'."*
 
 5. **Wait for the user** to return with pasted content. Do not proceed to the next Phase without it.
 
-6. **Integrate the returned research** into `references.md` by mapping its `##` sections (§1 Source Materials, §2 Historical ..., etc.) to the corresponding `references.md` sections. Apply the **format tolerance protocol**:
+6. **Paste sanity check** (before integration): verify the pasted content looks like actual research, not a Canvas/Artifact placeholder. **Red flags**:
+   - Pasted content is under 500 characters total
+   - Contains `googleusercontent.com/immersive_entry_chip` (Gemini Canvas internal placeholder)
+   - Only says "I've completed the research" or similar, with no §N section headers
+   - Contains a single URL reference but no research text body
+
+   If any red flag is detected, tell the user: *"It looks like you may have copied a placeholder instead of the actual research content. Your chat AI probably put the full results in a side panel (Canvas / Artifact). Please open that panel, select all the text inside it, and paste it again."* Do not attempt to integrate placeholder content.
+
+7. **Integrate the returned research** into `references.md` by mapping its `##` sections (§1 Source Materials, §2 Historical ..., etc.) to the corresponding `references.md` sections. Apply the **format tolerance protocol**:
    - **Strict on section recognition**: top-level headers must be identifiable (minor rephrasing is OK if the intent is clear)
    - **Relaxed on sub-structure**: accept variations like bullets-vs-nested-lists, swapped field names, extra wording
    - **On ambiguity**: ask the user one clarifying question before proceeding
@@ -240,10 +254,17 @@ Use the paths computed in Step 1. Always write to the canonical path — do not 
 **Prerequisite (one-time setup)**: the `jsonschema` Python package must be installed. If not already available:
 
 ```bash
+# Option 1 (recommended): project-level virtual environment — safest on all platforms
+python3 -m venv .venv && source .venv/bin/activate && pip install jsonschema
+
+# Option 2: global install (works if your system Python allows it)
 pip install jsonschema
-# or, for a user-local install without sudo:
-pip install --user jsonschema
+
+# Option 3: if blocked by PEP 668 (Python 3.12+ on macOS / managed Linux distros)
+pip install --break-system-packages jsonschema
 ```
+
+**Note on PEP 668**: Python 3.12+ on macOS (Homebrew) and many Linux distros marks the system Python as "externally managed", blocking both `pip install` and `pip install --user`. Option 1 (venv) avoids this entirely. Option 3 overrides the protection — safe for a single package like jsonschema but not recommended as a general habit.
 
 The skill does **not** auto-install dependencies. If `jsonschema` is missing when Step 4 runs, the validation script (below) gracefully falls back: it prints an install instruction, marks the card as "saved but not schema-validated", and exits 0. The user can install `jsonschema` later and manually re-run validation with the same Python block. This fallback is documented in §Failure Modes.
 
