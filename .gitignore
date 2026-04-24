@@ -1,0 +1,20 @@
+# Foundry build artifacts
+cache/
+out/
+broadcast/
+
+# Coverage / run logs
+coverage.txt
+coverage_ir.txt
+out.txt
+test_output.txt
+*.log
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Env / secrets
+.env
+.env.*
