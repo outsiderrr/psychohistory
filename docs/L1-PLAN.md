@@ -1,8 +1,8 @@
 # Psychohistory V0.3 — L1 Master Plan
 
-**Status**: L1 阶段完成（2026-05-08 → 2026-05-09 增补 CEO review 战略决策）
+**Status**: L1 阶段完成（2026-05-08 → 2026-05-09 增补 CEO review 战略决策 + L2-T0.D 落地至 V0.32）
 **Project Version**: V0.3
-**TDD Reference**: [docs/TDD-V0.30.md](TDD-V0.30.md) → 升级至 [docs/TDD-V0.31.md](TDD-V0.31.md) → 待 L2-T0.D 升级至 V0.32
+**TDD Reference**: 当前活跃版本 → [docs/TDD-V0.32.md](TDD-V0.32.md)（ADR-0008~0014 落地）。前序版本：[V0.31](TDD-V0.31.md) → [V0.30](TDD-V0.30.md)（archive）
 **Strategic decisions**: [DECISIONS.md](DECISIONS.md) 的 ADR-0001 ~ ADR-0014
 **Project standards**: [PROPOSITION_STANDARD.md](PROPOSITION_STANDARD.md)（QPS）
 **Deferred items**: [TODOS.md](TODOS.md)
