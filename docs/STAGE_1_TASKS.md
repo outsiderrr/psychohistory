@@ -85,13 +85,15 @@ L2 视角关注方向 (4 条):
 ### Goal (preview)
 Implement `src/libraries/PsychohistoryTypes.sol` (enums + structs from TDD §9) and `src/libraries/Constants.sol` (constants from TDD §9). No contract logic, only type definitions.
 
-### Notable elements (from TDD V0.31 §9)
-- `Bounty` struct including `PrivacyMode privacyMode` (V0.4 hook B), `resolvedAt`, `totalRawWagerAmount` / `totalEffectiveWagerAmount` / `totalFeeCollected`
-- `Prediction` struct including `rawWager / effectiveWager / feeAmount` and `bytes encryptedPayload` (V0.4 hook A)
+### Notable elements (from TDD V0.32 §9)
+- `Bounty` struct including `PrivacyMode privacyMode` (V0.4 hook B), `resolvedAt`, `totalRawWagerAmount` / `totalEffectiveWagerAmount` / `totalFeeCollected`, **`int256 resolvedValue`** (V0.32 / ADR-0009: signed numerical), **`uint256 tvlCap`** (V0.32 / ADR-0011: per-bounty TVL cap)
+- `Prediction` struct including **`int256 predictedValue`** (V0.32 / ADR-0009), `rawWager / effectiveWager / feeAmount` and `bytes encryptedPayload` (V0.4 hook A)
 - `SettlementState` with `currentPass / passCompletedFlags / cutoffHintSubmitted / cutoffHintScore`
+- **`CumulativeBrierStats` struct** (V0.32 / ADR-0010: cross-bounty forecaster rating; 7 uint256 fields + 1 timestamp)
 - New enums `PrivacyMode { Transparent, OracleEncrypted, ThresholdEncrypted }`, `RefundReasonCode { INVALIDATED, CANCELLED, NO_SIGNAL }`
-- Constants: `MAX_SPONSORS_PER_BOUNTY = 100`, `K_WAD_PHASE1..7` schedule, Treasury category constants including `CAT_P2_UNALLOCATED`
+- Constants: `MAX_SPONSORS_PER_BOUNTY = 100`, **`MAX_BOUNTY_TVL_CAP_DEFAULT = 10_000 * 1e6`** (V0.32 / ADR-0011), `K_WAD_PHASE1..7` schedule, Treasury category constants including `CAT_P2_UNALLOCATED`
 - `__reservedForV04` storage gaps on `Bounty` / `Prediction` / `SettlementState`
+- (V0.32 / ADR-0013) Treasury time-lock primitives: `ScheduledWithdrawal` struct + `pendingWithdrawals` mapping + `launchPeriodActive` flag — placement (shared types library vs Treasury-internal) is a T1.2 author judgment call
 
 ### Acceptance criteria (preview)
 - `forge build` succeeds; no warnings.
@@ -119,12 +121,13 @@ Author all six interface files from TDD §10 with full NatSpec:
 - `IBuybackExecutor.sol`
 - `IPsychohistoryToken.sol`
 
-### Notable elements (from TDD V0.31 §10)
-- `IBountyManager`: 5 PE-only mutators (`recordPrediction / closeBounty / markResolved / markInvalidated / markSettled`); `addSponsorship` documents 100-cap; `SponsorRefundClaimed` event with `RefundReasonCode`
-- `IPredictionEngine`: `submitPrediction` includes `bytes encryptedPayload`; new `submitCutoffHint`
-- `IRewardDistributor`: 4-function API (`reserveRewards / assignRewards / finalizeRewards / claimTokens`)
-- `ITreasury`: `CAT_P2_UNALLOCATED` category; per-category balance views; `pullBuybackForEpoch` replaces `scheduleBuyback`
-- `IBuybackExecutor`: `Activated` event; `isActivated()` view
+### Notable elements (from TDD V0.32 §10)
+- `IBountyManager`: 5 PE-only mutators (`recordPrediction / closeBounty / markResolved / markInvalidated / markSettled`); `addSponsorship` documents 100-cap and **enforces per-bounty `tvlCap`** (V0.32 / ADR-0011, new error `BountyTvlCapExceeded`); **`createBounty` adds `tvlCap` parameter** (0 = use `MAX_BOUNTY_TVL_CAP_DEFAULT`); `SponsorRefundClaimed` event with `RefundReasonCode`
+- `IPredictionEngine`: `submitPrediction` includes `bytes encryptedPayload` and **`int256 predictedValue`** (V0.32 / ADR-0009); `resolve` parameter **`int256 resolvedValue`**; new `submitCutoffHint` (replaceable per ADR-0007); **3 new view functions** (V0.32 / ADR-0010): `getForecasterStats / getForecasterAverageScore / getForecasterWinRate`; user entry-paths gated by `whenNotPaused` (V0.32 / ADR-0012, exit paths exempt)
+- `IRewardDistributor`: 4-function API (`reserveRewards / assignRewards / finalizeRewards / claimTokens`); `claimTokens` is exit path, NOT gated by pause
+- `ITreasury`: `CAT_P2_UNALLOCATED` category; per-category balance views; `pullBuybackForEpoch` replaces `scheduleBuyback`; **time-locked admin outflows** (V0.32 / ADR-0013): `scheduleDaoWithdrawal / executeDaoWithdrawal / cancelDaoWithdrawal` + `endLaunchPeriod()` + `launchPeriodActive` view
+- `IBuybackExecutor`: `Activated` event; `isActivated()` view; `executeEpoch` gated by `whenNotPaused`
+- All upgradeable contracts emit `Paused / Unpaused` events from OZ inheritance (V0.32 / ADR-0012)
 
 ### Acceptance criteria (preview)
 - `forge build` succeeds against mock implementations.
